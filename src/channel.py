@@ -16,33 +16,55 @@ class Channel:
     def __init__(self, channel_id: str) -> None:
         self._channel_id = channel_id
         self._channel = self.__youtube.channels().list(id=self._channel_id, part='snippet,statistics').execute()
+        self.__items = self._channel.get('items')[0]
+        self._title = self.__items['snippet']['title']
+        self._description = self.__items['snippet']['description']
+        self._url = self.__items['snippet']['customUrl']
+        self._subscriber_count = self.__items['statistics']['subscriberCount']
+        self._video_count = self.__items['statistics']['videoCount']
+        self._view_count = self.__items['statistics']['viewCount']
 
-    def __get_items(self) -> Optional[Dict]:
-        return self._channel.get('items')[0]
+    def __str__(self) -> str:
+        return f'{self.title} ({self.url})'
+
+    def __add__(self, other) -> int:
+        return self.subscriber_count + other.subscriber_count
+
+    def __sub__(self, other):
+        return self.subscriber_count - other.subscriber_count
+    
+    def __gt__(self, other):
+        return self.subscriber_count > other.subscriber_count
+
+    def __ge__(self, other):
+        return self.subscriber_count >= other.subscriber_count
+
+    def __eq__(self, other):
+        return self.subscriber_count == other.subscriber_count
 
     @property
     def title(self) -> str:
-        return self.__get_items()['snippet']['title']
+        return self._title
 
     @property
     def description(self) -> str:
-        return self.__get_items()['snippet']['description']
+        return self._description
 
     @property
     def url(self) -> str:
-        return "https://www.youtube.com/" + self.__get_items()['snippet']['customUrl']
+        return "https://www.youtube.com/" + self._url
 
     @property
     def subscriber_count(self) -> int:
-        return int(self.__get_items()['statistics']['subscriberCount'])
+        return int(self._subscriber_count)
 
     @property
     def video_count(self) -> int:
-        return int(self.__get_items()['statistics']['videoCount'])
+        return int(self._video_count)
 
     @property
     def view_count(self) -> int:
-        return int(self.__get_items()['statistics']['viewCount'])
+        return int(self._view_count)
 
     @classmethod
     def get_service(cls) -> Any:
