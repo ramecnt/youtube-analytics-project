@@ -57,4 +57,13 @@ class Channel:
 
     def to_json(self, fp) -> None:
         with open(fp, 'w', encoding='utf-8') as f:
-            json.dump(self._channel, f, indent=2, ensure_ascii=False)
+            js = {
+                "id": self._channel_id,
+                "title": self.title,
+                "description": self.description,
+                "url": self.url,
+                "subscriber_count": self.subscriber_count,
+                "video_count": self.video_count,
+                "view_count": self.view_count
+            }
+            json.dump(js, f, indent=2, ensure_ascii=False)
