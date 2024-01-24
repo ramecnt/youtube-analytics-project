@@ -45,11 +45,3 @@ class Video:
         return self._title
 
 
-class PLVideo(Video):
-    def __init__(self, video_id: int, playlist_id: int):
-        super().__init__(video_id)
-        self._playlist_id = playlist_id
-
-    @property
-    def playlist_id(self) -> int:
-        return self._playlist_id
