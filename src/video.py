@@ -2,31 +2,38 @@ import os
 
 from dotenv import load_dotenv
 from googleapiclient.discovery import build
-from typing import Dict
+from typing import Dict, Optional
 
 load_dotenv()
 
 
 class Video:
-    __API_key = os.getenv("API_key")
+    __API_key = "AIzaSyCyuQKNvYVgQWxg3obGZV4qoA_O-qdzvrk"
     __youtube = build('youtube', 'v3', developerKey=__API_key)
 
     def __init__(self, id: int):
-        self._video: Dict = self.__youtube.videos().list(part='snippet,statistics,contentDetails,topicDetails',
-                                                         id=id).execute()
-        self.__items: Dict = self._video.get('items')[0]
         self._id: int = id
-        self._title: str = self.__items['snippet']['title']
-        self._link: str = f"https://www.youtube.com/watch?v={id}"
-        self._views: str = self.__items['statistics']['viewCount']
-        self._likes: str = self.__items['statistics']['likeCount']
+        self._video: Dict = self.__youtube.videos().list(part='snippet,statistics,contentDetails,topicDetails',
+                                                         id=self.id).execute()
+        try:
+            self.__items: Dict = self._video.get('items')[0]
+        except IndexError:
+            self._title: None = None
+            self._link: None = None
+            self._views: None = None
+            self._likes: None = None
+        else:
+            self._title: str = self.__items['snippet']['title']
+            self._link: str = f"https://www.youtube.com/watch?v={id}"
+            self._views: int = int(self.__items['statistics']['viewCount'])
+            self._likes: int = int(self.__items['statistics']['likeCount'])
 
     @property
     def id(self) -> int:
         return self._id
 
     @property
-    def name(self) -> str:
+    def title(self) -> str:
         return self._title
 
     @property
@@ -34,12 +41,12 @@ class Video:
         return self._link
 
     @property
-    def views(self) -> int:
-        return int(self._views)
+    def views(self) -> Optional[int]:
+        return self._views
 
     @property
-    def likes(self) -> int:
-        return int(self._likes)
+    def like_count(self) -> Optional[int]:
+        return self._likes
 
     def __str__(self) -> str:
         return self._title

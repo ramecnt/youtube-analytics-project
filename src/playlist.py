@@ -14,7 +14,7 @@ load_dotenv()
 
 
 class PlayList:
-    __API_key = "AIzaSyCyuQKNvYVgQWxg3obGZV4qoA_O-qdzvrk"
+    __API_key = os.getenv("API_key")
     __youtube = build('youtube', 'v3', developerKey=__API_key, )
 
     def __init__(self, playlist_id: int):
